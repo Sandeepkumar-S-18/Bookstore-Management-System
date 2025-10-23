@@ -1,12 +1,13 @@
 package com.bookstore.repository;
 
 import com.bookstore.entity.Book;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface BookRepository extends JpaRepository<Book, Long> {
-    List<Book> findByTitleContainingIgnoreCase(String title);
-    List<Book> findByAuthorContainingIgnoreCase(String author);
-    List<Book> findByGenre(String genre);
+    Page<Book> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+    Page<Book> findByAuthorsContainingIgnoreCase(String authors, Pageable pageable);
+    Page<Book> findByTitleContainingIgnoreCaseOrAuthorsContainingIgnoreCase(String title, String authors, Pageable pageable);
+    Page<Book> findByGenreContainingIgnoreCase(String genre, Pageable pageable);
 }

@@ -1,36 +1,27 @@
-package com.bookstore.entity;
+package com.bookstore.dto;
 
-import jakarta.persistence.*;
+import com.bookstore.entity.Book;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "books")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Book {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@AllArgsConstructor
+public class BookResponseDTO {
     private Long id;
-
     private String title;
     private String authors;
     private String genre;
-
-    @Column(unique = true, nullable = false)
     private String isbn;
-
-    @Column(precision = 10, scale = 2)
     private BigDecimal price;
-
-    @Column(length = 2000)
     private String description;
-
     private int stockQuantity;
     private String imageUrl;
+
+    public static BookResponseDTO fromEntity(Book book) {
+        return new BookResponseDTO(book.getId(), book.getTitle(), book.getAuthors(), book.getGenre(), book.getIsbn(), book.getPrice(), book.getDescription(), book.getStockQuantity(), book.getImageUrl());
+    }
 }
