@@ -17,7 +17,10 @@ public class JwtUtil {
     private final long EXPIRATION_TIME = 86400000; // 1 day
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        byte[] keyBytes = SECRET_KEY.getBytes(); // if storing raw bytes
+        // If you store base64 in properties, do:
+        // byte[] keyBytes = Base64.getDecoder().decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateToken(String username) {

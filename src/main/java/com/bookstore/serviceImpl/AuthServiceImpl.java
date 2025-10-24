@@ -31,13 +31,22 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("Email already registered");
         }
 
-        // Encode password
-        userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        // Default to CUSTOMER if role not provided
+        if (userRequest.getRole() == null) {
+            userRequest.setRole(com.bookstore.enumClassess.Role.CUSTOMER);
+        } else {
+            // Important: Do not allow public registration as ADMIN in production.
+            // If you want to allow admin creation, protect this endpoint or use a seed/admin creation flow.
+            if (userRequest.getRole() == com.bookstore.enumClassess.Role.ADMIN) {
+                throw new IllegalArgumentException("Cannot create ADMIN via public register endpoint");
+            }
+        }
 
-        // Save user
+        // Convert to entity, then encode password on entity (avoid mutating DTO as best practice)
         User user = UserRequestDTO.toEntity(userRequest);
-        User saved = userRepository.save(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+        User saved = userRepository.save(user);
         return UserResponseDTO.fromEntity(saved);
     }
 
