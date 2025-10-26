@@ -55,7 +55,7 @@ public class BookController {
 
     // -------- Add new book (Admin only) --------
     @Operation(summary = "Add new book (Admin only)")
-    @PreAuthorize("hasAuthority('ADMIN') or hasRole('ADMIN')") // depends on how you map roles
+    @PreAuthorize("hasRole('ADMIN')") // depends on how you map roles
     @PostMapping
     public ResponseEntity<BookResponseDTO> addBook(@Valid @RequestBody BookRequestDTO request) {
         BookResponseDTO created = bookService.addBook(request);
@@ -64,7 +64,7 @@ public class BookController {
 
     // -------- Update book (Admin only) --------
     @Operation(summary = "Update book (Admin only)")
-    @PreAuthorize("hasAuthority('ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<BookResponseDTO> updateBook(
             @PathVariable Long id,
@@ -76,7 +76,7 @@ public class BookController {
 
     // -------- Delete book (Admin only) --------
     @Operation(summary = "Delete book (Admin only)")
-    @PreAuthorize("hasAuthority('ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);

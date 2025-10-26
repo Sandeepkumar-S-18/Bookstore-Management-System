@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -17,19 +18,24 @@ public class JwtUtil {
     private final long EXPIRATION_TIME = 86400000; // 1 day
 
     private Key getSigningKey() {
-        byte[] keyBytes = SECRET_KEY.getBytes(); // if storing raw bytes
-        // If you store base64 in properties, do:
-        // byte[] keyBytes = Base64.getDecoder().decode(SECRET_KEY);
+        // Decode the base64-encoded secret to bytes
+        byte[] keyBytes = Base64.getDecoder().decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String username) {
+    // Rest of the methods remain the same...
+    public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String generateToken(String username) {
+        return generateToken(username, null);
     }
 
     public String extractUsername(String token) {
@@ -39,6 +45,15 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    public String extractRole(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
     }
 
     public boolean validateToken(String token) {

@@ -6,9 +6,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,9 +28,8 @@ public class Order {
     private User user;
 
     // List of ordered books
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "order_id") // foreign key in OrderItem table
-    private List<OrderItem> items;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items = new ArrayList<>();
 
     private BigDecimal totalPrice;
 
@@ -38,7 +37,7 @@ public class Order {
     private OrderStatus status = OrderStatus.PENDING;
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus = PaymentStatus.PENDING;  // Default to PENDING
+    private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 }
